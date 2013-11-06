@@ -1,0 +1,3 @@
+name: Trainstore
+main: net.siebentupel.trainstore.Trainstore
+version: 0.1
