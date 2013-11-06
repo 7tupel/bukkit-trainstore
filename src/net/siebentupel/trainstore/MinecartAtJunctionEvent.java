@@ -6,8 +6,13 @@ import org.bukkit.event.HandlerList;
 
 public final class MinecartAtJunctionEvent extends Event {
 	private Vehicle cart;
+	
 	public MinecartAtJunctionEvent(Vehicle cart) {
 		this.cart = cart;
+	}
+	
+	public Vehicle getCart() {
+		return this.cart;
 	}
 
 	@Override

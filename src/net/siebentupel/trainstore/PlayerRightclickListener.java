@@ -33,6 +33,7 @@ public final class PlayerRightclickListener implements Listener {
 				if(sign.getLine(0) == "[tsdestination]") {
 					// iff it is, set the new destination for the player
 					this.plugin.setPlayerDestination(event.getPlayer(), sign.getLine(1));
+					this.plugin.logMessage("set player destination to " + sign.getLine(1));
 				}
 			}
 		} finally {

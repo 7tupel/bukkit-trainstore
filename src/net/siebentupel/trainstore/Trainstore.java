@@ -29,7 +29,7 @@ public final class Trainstore extends JavaPlugin {
 		// register the Listener for the "click on sign" event
 		//getServer().getPluginManager().registerEvents(new ClickOnSignListener(this), this);
 		// register the Listener for the "minecart at junction" event
-		getServer().getPluginManager().registerEvents(new MinecartAtJunctionListener(), this);
+		getServer().getPluginManager().registerEvents(new MinecartAtJunctionListener(this), this);
 		
 		// set a default location for all players online
 	    for (Player player : this.getServer().getOnlinePlayers()) {
@@ -70,5 +70,9 @@ public final class Trainstore extends JavaPlugin {
     	}
     }
     
+    
+    public void logMessage(String message) {
+    	getLogger().info(message);
+    }
     
 }
