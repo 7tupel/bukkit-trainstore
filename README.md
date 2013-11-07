@@ -10,6 +10,7 @@ I used the existing Bukkit plugin [PdxTrackRouter](https://github.com/glguy/PdxT
 
 Trainstore automatic routing works with **destinations** and **junctions**.
 A destination is either set via the *ts-set-destination DESTINATION* command or destination signs. A destination sign looks like
+
 1. [tsdestination]
 2. DESTINATIONIDENTIFIER
 3. additional name or description (optinal)
