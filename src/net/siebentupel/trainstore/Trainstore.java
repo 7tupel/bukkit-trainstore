@@ -5,6 +5,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.bukkit.block.Block;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -290,6 +291,23 @@ public final class Trainstore extends JavaPlugin {
     
     public void clearLines() {
     	this.lines.clear();
+    }
+    
+    public TrackJunction getJunction(Block block) {
+    	Set<TrackJunction> junctions = routingTable.keySet();
+    	for(TrackJunction junction : junctions) {
+    		if(junction.getBlock().equals(block))
+    			return junction;
+    	}
+    	return null;
+    }
+    
+    public TrackStation getStation(String destination) {
+    	for(TrackStation station : stations) {
+    		if(station.getName().equals(destination))
+    			return station;
+    	}
+    	return null;
     }
     
 }

@@ -36,6 +36,104 @@ public final class MinecartAtJunctionListener implements Listener {
 		Block block;
 		BlockState state;
 		
+		// get the state of the block/rrail of the junction
+		final BlockState junctionState = junctionBlock.getState();
+		final Rails rail = (Rails) junctionState.getData();
+		
+		// get the cRailJunction object fot his block from the global junction list
+		TrackJunction trackJunction = this.plugin.getJunction(junctionBlock);
+		TrackStation trackStation = this.plugin.getStation(this.plugin.getPlayerDestination(player));
+		
+		Direction d = trackJunction.getDirection(trackStation);
+		
+		BlockFace face = event.getFromLocation().getFace(event.getToLocation());
+		switch(face) {
+		case NORTH:
+			switch(d) {
+			case EAST:
+				rail.setDirection(BlockFace.NORTH_WEST, false);
+				junctionState.update();
+				break;
+			case WEST:
+				rail.setDirection(BlockFace.NORTH_EAST, false);
+				junctionState.update();
+				break;
+			case SOUTH:
+				rail.setDirection(BlockFace.NORTH, false);
+				junctionState.update();
+				break;
+			case NORTH:
+				rail.setDirection(BlockFace.NORTH, false);
+				junctionState.update();
+				break;
+			}
+			break;
+		case EAST:
+			switch(d) {
+			case NORTH:
+				rail.setDirection(BlockFace.SOUTH_EAST, false);
+				junctionState.update();
+				break;
+			case SOUTH:
+				rail.setDirection(BlockFace.NORTH_EAST, false);
+				junctionState.update();
+				break;
+			case WEST:
+				player.sendMessage("change direction to e-w");
+				rail.setDirection(BlockFace.EAST, false);
+				junctionState.update();
+				break;
+			case EAST:
+				rail.setDirection(BlockFace.EAST, false);
+				junctionState.update();
+				break;
+			}
+			break;
+		case SOUTH:
+			switch(d) {
+			case EAST:
+				rail.setDirection(BlockFace.SOUTH_WEST, false);
+				junctionState.update();
+				break;
+			case WEST:
+				rail.setDirection(BlockFace.SOUTH_EAST, false);
+				junctionState.update();
+				break;
+			case NORTH:
+				rail.setDirection(BlockFace.SOUTH, false);
+				junctionState.update();
+				break;
+			case SOUTH:
+				rail.setDirection(BlockFace.SOUTH, false);
+				junctionState.update();
+				break;
+			}
+			break;
+		case WEST:
+			switch(d) {
+			case NORTH:
+				rail.setDirection(BlockFace.SOUTH_WEST, false);
+				junctionState.update();
+				break;
+			case SOUTH:
+				rail.setDirection(BlockFace.NORTH_WEST, false);
+				junctionState.update();
+				break;
+			case EAST:
+				rail.setDirection(BlockFace.WEST, false);
+				junctionState.update();
+				break;
+			case WEST:
+				player.sendMessage("change direction to w-w");
+				rail.setDirection(BlockFace.WEST, false);
+				junctionState.update();
+				break;
+			}
+			break;
+		}
+		
+		
+		/*
 		// go trough all direct neighbor blocks up to 4 levels down
 		for(int y=1; y<5; y++) {
 			for(int x=-1; x<2; x++) {
@@ -168,6 +266,7 @@ public final class MinecartAtJunctionListener implements Listener {
 			}
 		}
 		routingTable.clear();
+		*/
 		return;
-    }
+    } 
 }

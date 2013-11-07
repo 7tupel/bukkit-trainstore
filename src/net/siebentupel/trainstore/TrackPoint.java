@@ -67,6 +67,22 @@ public class TrackPoint {
 		return stations;
 	}
 	
-	
+	public LinkedList<TrackJunction> getAttachedJunctions() {
+		LinkedList<TrackJunction> junctions = new LinkedList<TrackJunction>();
+		// go through all connected lines
+		for(RailLine line : connectedLines) {
+			if(this instanceof TrackStation) {
+				// check if the start or the end of the line is a station
+				if((line.getStart() instanceof TrackJunction) && !(this.equals((TrackJunction)line.getStart()))) {
+					junctions.add((TrackJunction)line.getStart());
+				}
+				if((line.getEnd() instanceof TrackJunction)  && !(this.equals((TrackJunction)line.getEnd()))) {
+					junctions.add((TrackJunction)line.getEnd());
+				}
+			}
+		}
+		return junctions;
+	}
+
 	
 }

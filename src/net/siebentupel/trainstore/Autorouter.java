@@ -55,6 +55,17 @@ public class Autorouter {
 			throw new TrackException("could not find a rail leaving the station");
 		// call update for recursive route search
 		updateRoutes(next.getFirst(), line, player);
+		
+		// now set routing tables for all junctions
+		for(TrackJunction junction : this.plugin.getRoutingTable().keySet()) {
+			junction.updateRoutingTable();
+		}
+		int k = this.plugin.getRoutingTable().size();
+		for(int i=0; i<k; i++) {
+			for(TrackJunction junction : this.plugin.getRoutingTable().keySet()) {
+				junction.updateRoutingTable2(player);
+			}
+		}
 	}
 	
 	public void updateRoutes(Block currentBlock, RailLine line, Player player) {
@@ -133,104 +144,7 @@ public class Autorouter {
 			}
 		}
 	}
-	
-	/*
-	public void updateRoutes(Block block, RailLine line, Player player) {
-		//player.sendMessage("recursive call");
-		LinkedList<Block> next = getNextTracks(block);
-		// go through all rails next to the current
-		for(int i=0;i<next.size();i++) {
-			//player.sendMessage("looping through neighbors");
-			Block currentBlock = next.get(i);
-			// first check if the rail was not yet visited
-			if(!(visited.contains(currentBlock))) {
-				// distinguish between the three types of TrackPoints: simple Rail, Station and Router/Junction
-				// it is a station
-				if(isStation(currentBlock)) {
-					player.sendMessage("found new station");
-					// add the block to the line
-					// do not, just add blocks to the line that are not start or end
-					// line.addBlock(currentBlock);
-					// make a new station and add it to the track
-					TrackStation end = new TrackStation(currentBlock);
-					line.setEnd(end);
-					// add the station to the global station list
-					this.plugin.addStation(end);
-					// add the current line to the station
-					end.addLine(line);
-				}
-				// it is a junction/router
-				else if(isJunction(currentBlock)) {
-					player.sendMessage("found new junction");
-					// create a new junction
-					TrackRouter junction = new TrackRouter(block);
-					// add the junction to the global junction map
-					this.plugin.addJunction(junction);
-					// add the block to the current line
-					// do not, just add blocks to the line that are not start or end
-					//line.addBlock(currentBlock);
-					// add the junction block as end of the line
-					line.setEnd(junction);
-					// add the line to the junction
-					junction.addLine(line);
-					// now the old line is finished
-					// start a new line for the currentBlock
-					RailLine newLine = new RailLine();
-					player.sendMessage("created new line");
-					// set start of the line to the current junction
-					newLine.setStart(junction);
-					// add the line to the global list of lines
-					this.plugin.addRailLine(newLine);
-					// inform the junction there is a new line attached to it
-					junction.addLine(newLine);
-					// add the current block to the line
-					line.addBlock(currentBlock);
-					// mark the current block as visited
-					visited.add(currentBlock);
-					// recursive call an the block
-					updateRoutes(currentBlock, newLine, player);
-					/*
-					// mark the current block as visited
-					visited.add(currentBlock);
-					// now check neighbor blocks for rails. there should be at least 3 and max 4
-					LinkedList<Block> junctionNeighbors = getNextTracks(block);
-					player.sendMessage("total junction neighbor rails: "+junctionNeighbors.size());
-					// go trough all neighbors
-					for(Block item : junctionNeighbors) {
-						player.sendMessage("on junction neighbor");
-						// if the neighbor was not yet visited
-						if(!(visited.contains(item))) {
-							player.sendMessage("junction neighbor not yet visited");
-							// start a new line
-							RailLine newLine = new RailLine();
-							// add line to the global line list
-							this.plugin.addRailLine(newLine);
-							// add the block to the line
-							newLine.addBlock(item);
-							// set the junction as start for the new line
-							newLine.setStart(junction);
-							// add the line to the junction
-							junction.addLine(newLine);
-							// recursive call
-							updateRoutes(item, newLine, player);
-						} else {
-							player.sendMessage("block "+item.getLocation().toString()+" already visited");
-						}
-					} *
-				} 
-				// just a simple rail
-				else {
-					player.sendMessage("found new rail");
-					// add the current block to the line
-					line.addBlock(currentBlock);
-					// mark current block as visited
-					visited.add(currentBlock);
-					// continue seach
-					updateRoutes(currentBlock, line, player);
-				}
-			}
-		}
-	}*/
+
 	
 	
 	private boolean isJunction(Block block) {
@@ -275,33 +189,6 @@ public class Autorouter {
 	
 	private LinkedList<Block> getNextTracks(Block block) {
 		LinkedList<Block> list = new LinkedList<Block>();
-		/*
-		if(Trainstore.isRail(block.getRelative(1,0,0).getType())) {
-			list.add(block.getRelative(1,0,0));
-		} else if(Trainstore.isRail(block.getRelative(-1,0,0).getType())) {
-			list.add(block.getRelative(-1,0,0));
-		} else if(Trainstore.isRail(block.getRelative(0,0,1).getType())) {
-			list.add(block.getRelative(0,0,1));
-		} else if(Trainstore.isRail(block.getRelative(0,0,-1).getType())) {
-			list.add(block.getRelative(0,0,-1));
-		} else if(Trainstore.isRail(block.getRelative(1,1,0).getType())) {
-			list.add(block.getRelative(1,1,0));
-		} else if(Trainstore.isRail(block.getRelative(-1,1,0).getType())) {
-			list.add(block.getRelative(-1,1,0));
-		} else if(Trainstore.isRail(block.getRelative(0,1,1).getType())) {
-			list.add(block.getRelative(0,1,1));
-		} else if(Trainstore.isRail(block.getRelative(0,1,-1).getType())) {
-			list.add(block.getRelative(0,1,-1));
-		} else if(Trainstore.isRail(block.getRelative(1,-1,0).getType())) {
-			list.add(block.getRelative(1,-1,0));
-		} else if(Trainstore.isRail(block.getRelative(-1,-1,0).getType())) {
-			list.add(block.getRelative(-1,-1,0));
-		} else if(Trainstore.isRail(block.getRelative(0,-1,1).getType())) {
-			list.add(block.getRelative(0,-1,1));
-		} else if(Trainstore.isRail(block.getRelative(0,-1,-1).getType())) {
-			list.add(block.getRelative(0,-1,-1));
-		} */
-		
 		for(int x=-1; x<2; x++) {
 			for(int y=-1; y<2; y++) {
 				for(int z=-1; z<2; z++) {
