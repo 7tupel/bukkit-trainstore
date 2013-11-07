@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import net.siebentupel.trainstore.exceptions.TrackException;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
@@ -12,8 +11,6 @@ public class Autorouter {
 	
 	private LinkedList<Block> visited = new LinkedList<Block>();
 	
-	private LinkedList<TrackPoint> trackPoints = new LinkedList<TrackPoint>();
-
 	private Trainstore plugin;
 	
 	public Autorouter(Trainstore plugin) {
@@ -21,21 +18,18 @@ public class Autorouter {
 	}
 	
 	public void updateRoutes(Block root, Player player) throws TrackException {
-		player.sendMessage("root block location: "+root.getLocation().toVector().toString());
 		// clear old routing table and station list
 		this.plugin.clearStations();
 		this.plugin.clearRoutingTable();
 		this.plugin.clearLines();
 		// first check if the block is a station block (=end of track)
 		if(!isStation(root)) {
-			player.sendMessage("root is not a station");
 			throw new TrackException("routing update must start at a station!");
 		}
 		// make a new station
 		TrackStation station = new TrackStation(root);
 		// add the station to the global station list
 		this.plugin.addStation(station);
-		player.sendMessage("found first station");
 		// make a new line with this station as start
 		RailLine line = new RailLine();
 		// add line to the global line list
@@ -125,9 +119,6 @@ public class Autorouter {
 			// get the next block of the track
 			LinkedList<Block> next = getNextTracks(currentBlock);
 			// there should be exactly one block in the list that was not visited
-			for(Block b : next) {
-				player.sendMessage("block at "+b.getLocation().toString());
-			}
 			if(next.size() != 2) {
 				throw new TrackException("error following the track. found too many alternatives: "+next.size());
 			}

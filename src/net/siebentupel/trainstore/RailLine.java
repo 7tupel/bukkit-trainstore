@@ -3,7 +3,6 @@ package net.siebentupel.trainstore;
 import java.util.LinkedList;
 
 import org.bukkit.block.Block;
-import org.bukkit.material.Rails;
 
 public class RailLine {
 	/** a list of all blocks of this track */

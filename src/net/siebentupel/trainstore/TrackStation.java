@@ -3,7 +3,6 @@ package net.siebentupel.trainstore;
 import net.siebentupel.trainstore.exceptions.TrackException;
 
 import org.bukkit.ChatColor;
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.Sign;
 
@@ -48,5 +47,9 @@ public class TrackStation extends TrackPoint {
 
 	public String getName() {
 		return this.name;
+	}
+	
+	public String getAlias(){
+		return this.alias;
 	}
 }

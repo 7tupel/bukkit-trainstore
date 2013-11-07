@@ -19,6 +19,7 @@ import org.bukkit.Material;
  * 
  * @author Moritz '7tupel' Moxter
  * @since  2013-11-06
+ * @version	2013-11-07
  *
  * the Trainstore plugin
  */
@@ -29,18 +30,21 @@ public final class Trainstore extends JavaPlugin {
 	/** the header of junction signs */
 	private static final String JUNCTION_HEADER = "[tsjunction]";
 	
+	/** the header for station signs */
 	private static final String STATION_HEADER = "[tsstation]";
 	
 	/** a map to store the destination of a player */
 	private Map<Player, String> playerDestination = new HashMap<Player, String>();
 	
-	/** */
+	/** a list that holds references to all stations that are part of the rail network */
 	private LinkedList<TrackStation> stations = new LinkedList<TrackStation>();
 	
-	/** */
+	/** a list that holds references to all lines in the rail network */
 	private LinkedList<RailLine> lines = new LinkedList<RailLine>();
 	
-	/** <TrackRouter(Junctions) <TrackStation(Destination), Direction>> */
+	/** <TrackRouter(Junctions) <TrackStation(Destination), Direction>> 
+	 * Important: this attribute will undergo massive refactoring in the near future
+	 */
 	private HashMap<TrackJunction, HashMap<TrackStation, Direction>> routingTable = new HashMap<TrackJunction, HashMap<TrackStation, Direction>>();
 	
 	/**
@@ -241,10 +245,20 @@ public final class Trainstore extends JavaPlugin {
     	return JUNCTION_HEADER.equalsIgnoreCase(ChatColor.stripColor(line));
     }
     
+    /**
+     * check if the given line of a sign matches the STATION header
+     * @param line		the line we would like to match
+     * @return			true iff sucess, false else
+     */
     public static boolean isStationSign(String line) {
     	return STATION_HEADER.equalsIgnoreCase(ChatColor.stripColor(line));
     }
     
+    /**
+     * checks if a given (block) material is a rail (all types of rails are accepted)
+     * @param material		the material to check
+     * @return				true iff success, false else
+     */
     public static boolean isRail(Material material) {
     	if((material == Material.RAILS) || (material == Material.POWERED_RAIL)
     			|| (material == Material.ACTIVATOR_RAIL) || (material == Material.DETECTOR_RAIL)) {
@@ -253,46 +267,91 @@ public final class Trainstore extends JavaPlugin {
     	return false;
     }
     
+    /**
+     * add a station to the reference list
+     * @param station	the station added
+     */
     public void addStation(TrackStation station) {
     	this.stations.add(station);
     }
     
+    /**
+     * get a list of all stations in the rail system
+     * @return	the list of stations in the rail system
+     */
     public LinkedList<TrackStation> getAllStations() {
     	return this.stations;
     }
     
+    /**
+     * get the routing table of the rail system
+     * IMPORTANT: with the refactoring of the class attribute 'routingTable' the method will be changed!
+     * @return
+     */
     public HashMap<TrackJunction, HashMap<TrackStation, Direction>> getRoutingTable() {
     	return this.routingTable;
     }
     
+    /**
+     * @deprecated		not used anymore
+     * @param junction
+     * @param destination
+     * @return
+     */
     public Direction getDirection(TrackJunction junction, TrackStation destination) {
     	return this.routingTable.get(junction).get(destination);
     }
     
+    /**
+     * add a junction reference to the junction reference list
+     * @param junction	the junction to put in the list
+     */
     public void addJunction(TrackJunction junction) {
     	this.routingTable.put(junction, new HashMap<TrackStation, Direction>());
     }
     
+    /**
+     * add a rail line to the rail line reference list
+     * @param line	the RailLine to add
+     */
     public void addRailLine(RailLine line) {
     	this.lines.add(line);
     }
     
+    /**
+     * get a list of all RailLines in the rail system
+     * @return	the list of all RailLines
+     */
     public LinkedList<RailLine> getLines() {
     	return this.lines;
     }
     
+    /**
+     * clear the station reference list
+     */
     public void clearStations() {
     	this.stations.clear();
     }
     
+    /**
+     * clear the routing table
+     */
     public void clearRoutingTable() {
     	this.routingTable.clear();
     }
     
+    /**
+     * clear the Line reference lsit
+     */
     public void clearLines() {
     	this.lines.clear();
     }
     
+    /**
+     * get the junction corresponding to a block
+     * @param block		the block the junction is on
+     * @return	the junction object
+     */
     public TrackJunction getJunction(Block block) {
     	Set<TrackJunction> junctions = routingTable.keySet();
     	for(TrackJunction junction : junctions) {
@@ -301,7 +360,11 @@ public final class Trainstore extends JavaPlugin {
     	}
     	return null;
     }
-    
+    /**
+     * get the Station object based on its name
+     * @param destination	the name of the destination
+     * @return	the corresponding station object
+     */
     public TrackStation getStation(String destination) {
     	for(TrackStation station : stations) {
     		if(station.getName().equals(destination))

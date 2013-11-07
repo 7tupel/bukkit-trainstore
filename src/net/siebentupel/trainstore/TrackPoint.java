@@ -4,7 +4,6 @@ import java.util.LinkedList;
 
 import net.siebentupel.trainstore.exceptions.TrackException;
 
-import org.bukkit.Material;
 import org.bukkit.block.Block;
 
 public class TrackPoint {

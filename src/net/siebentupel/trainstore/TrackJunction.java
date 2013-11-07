@@ -76,54 +76,28 @@ public class TrackJunction extends TrackPoint {
 				}
 			}
 		}
-		/*
-		// get all junctions this junction is connected to
-		LinkedList<TrackJunction> junctions = this.getAttachedJunctions();
-		// go trough all junctions
-		for(TrackJunction junction : junctions) {
-			// get all routing table entries of this junction
-			HashMap<TrackStation, Direction> neighborRoutingTable = junction.getLocalRoutingTable();
-			// go through all stations the neighbor junction has routing tables entries for
-			Set<TrackJunction> neighborRoutingTable = neighborRoutingTable.keySet();
-			for(TrackStation station : neighborStations) {
-				// if there is no routing entry for the station in the local table create one
-				if(!localRoutingTable.containsKey(station)) {
-					
-				}
-			}
-		}*/
 	}
 	
 	void updateRoutingTable2(Player player) {
 		BlockFace face = null;
 		TrackJunction junction = null;
-		// store those lines we need
-		LinkedList<RailLine> railLines = new LinkedList<RailLine>();
 		// go trough all lines connected to this junction
 		for(RailLine line : this.connectedLines) {
-			player.sendMessage("line connected to junction");
 			// get the connected junction and the face to it
 			if((line.getStart() instanceof TrackJunction) && !(((TrackJunction)line.getStart()).equals(this))) {
-				player.sendMessage("found connected junction");
 				junction = (TrackJunction)line.getStart();
 				face = this.block.getFace(line.getEndBlock());
-				player.sendMessage("face: "+face.toString());
 			} else if((line.getEnd() instanceof TrackJunction) && !(((TrackJunction)line.getEnd()).equals(this))) {
-				player.sendMessage("found connected junction");
 				junction = (TrackJunction)line.getEnd();
 				face = this.block.getFace(line.getStartBlock());
-				player.sendMessage("face: "+face.toString());
 			}
 			// get all routing table entries of the neighbor junction
 			if((junction != null) && (face != null)) {
-				player.sendMessage("junction is not null");
-				player.sendMessage("table size: "+junction.getLocalRoutingTable().size());
 				Set<TrackStation> set = junction.getLocalRoutingTable().keySet();
 				
 				for(TrackStation s : set) {
 					// if there is no enty in the local routing table for this station
 					if(!this.localRoutingTable.containsKey(s)) {
-						player.sendMessage("insert new entry: "+s.getName());
 						switch(face) {
 						case NORTH:
 							localRoutingTable.put(s, Direction.NORTH);
@@ -149,19 +123,6 @@ public class TrackJunction extends TrackPoint {
 		return this.localRoutingTable;
 	}
 	
-	/*
-	public void talkToNeighbors() {
-		// go through all connections with neighbors
-		for(RailLine line : connectedLines) {
-			// check the lines start and end point
-			if((line.getStart() instanceof TrackJunction) && !(((TrackJunction)line.getStart()).equals(this))) {
-				//((TrackJunction)line.getStart()).addRoute()
-			} else if((line.getEnd() instanceof TrackJunction) && !(((TrackJunction)line.getEnd()).equals(this))) {
-				
-			}
-		}
-	}
-	*/
 	
 	public Direction getDirection(TrackStation station) {
 		return this.localRoutingTable.get(station);

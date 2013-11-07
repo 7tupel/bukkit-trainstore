@@ -1,6 +1,5 @@
 package net.siebentupel.trainstore;
 
-import java.util.HashMap;
 import java.util.LinkedList;
 
 public class RailSystem {
