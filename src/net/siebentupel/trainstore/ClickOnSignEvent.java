@@ -1,19 +1,25 @@
 package net.siebentupel.trainstore;
 
 import org.bukkit.block.Sign;
+import org.bukkit.entity.Player;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 public final class ClickOnSignEvent extends Event {
 	private static final HandlerList handlers = new HandlerList();
-	private Sign sign;
+	/** the sign the player clicked */
+	private final Sign sign;
+	/** the player who clicked on the sign */
+	private final Player player;
 	
-	public ClickOnSignEvent(Sign sign) {
+	/**
+	 * default constructor
+	 * @param sign		the sign that was clicked
+	 * @param player	the player who clicked on the sign
+	 */
+	public ClickOnSignEvent(Sign sign, Player player) {
 		this.sign = sign;
-	}
-	
-	public Sign getSign() {
-		return sign;
+		this.player = player;
 	}
 	
 	@Override
@@ -23,6 +29,14 @@ public final class ClickOnSignEvent extends Event {
 
     public static HandlerList getHandlerList() {
         return handlers;
+    }
+
+	public Sign getSign() {
+		return sign;
+	}
+    
+    public Player getPlayer() {
+    	return this.player;
     }
 
 }

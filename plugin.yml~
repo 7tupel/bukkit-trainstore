@@ -5,25 +5,17 @@ commands:
   ts-set-destination:
    description: set the destination for a player.
    usage: /<command> [destination]
-   permission: <plugin name>.destination.set
+   permission: <plugin name>.setdestination
    permission-message: You don't have <permission>
   ts-clear-destination:
     description: clear the destination of a player.
     usage: /<command>
-    permission: <plugin name>.destination.clear
-    permission-message: You don't have <permission>
-  ts-destination:
-    description: get the current destination of a player.
-    usage: /<command>
-    permission: <plugin name>.destination.get
+    permission: <plugin name>.cleardestination
     permission-message: You don't have <permission>
 permissions:
-  destination.set:
+  setdestination:
     description: set a destination for oneself
     default: true
-  destination.clear:
+  cleardestination:
     description: clear destination for oneself
-    default: true
-  destination.get:
-    description: get current destination for oneself
     default: true
