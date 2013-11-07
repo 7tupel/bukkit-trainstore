@@ -6,6 +6,7 @@ import net.siebentupel.trainstore.exceptions.TrackException;
 
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Player;
 
 public class Autorouter {
 	
@@ -19,15 +20,20 @@ public class Autorouter {
 		this.plugin = plugin;
 	}
 	
-	public void updateRoutes(Block root) throws TrackException {
+	public void updateRoutes(Block root, Player player) throws TrackException {
+		// clear old routing table and station list
+		this.plugin.clearStations();
+		this.plugin.clearRoutingTable();
 		// first check if the block is a station block (=end of track)
 		if(!isStation(root)) {
+			player.sendMessage("root is not a station");
 			throw new TrackException("routing update must start at a station!");
 		}
 		// make a new station
 		TrackStation station = new TrackStation(root);
 		// add the station to the global station list
 		this.plugin.addStation(station);
+		player.sendMessage("found first station");
 		// make a new line with this station as start
 		RailLine line = new RailLine();
 		// set station as one end of the trackline
@@ -39,19 +45,22 @@ public class Autorouter {
 		// set the block as visited
 		visited.add(root);
 		// call update for recursive route search
-		updateRoutes(root, line);
+		updateRoutes(root, line, player);
 	}
 	
-	public void updateRoutes(Block block, RailLine line) {
+	public void updateRoutes(Block block, RailLine line, Player player) {
+		player.sendMessage("recursive call");
 		LinkedList<Block> next = getNextTracks(block);
 		// go through all rails next to the current
 		for(int i=0;i<next.size();i++) {
+			player.sendMessage("looping through neighbors");
 			Block currentBlock = next.get(i);
 			// first check if the rail was not yet visited
 			if(!(visited.contains(currentBlock))) {
 				// distinguish between the three types of TrackPoints: simple Rail, Station and Router/Junction
 				// it is a station
 				if(isStation(currentBlock)) {
+					player.sendMessage("found new station");
 					// add the block to the line
 					line.addBlock(currentBlock);
 					// make a new station and add it to the track
@@ -64,11 +73,19 @@ public class Autorouter {
 				}
 				// it is a junction/router
 				else if(isJunction(currentBlock)) {
-					
+					player.sendMessage("found new junction");
+					TrackRouter junction = new TrackRouter(currentBlock);
+					this.plugin.addJunction(junction);
 				} 
 				// just a simple rail
 				else {
-					
+					player.sendMessage("found new rail");
+					// add the current block to the line
+					line.addBlock(currentBlock);
+					// mark current block as visited
+					visited.add(currentBlock);
+					// continue seach
+					updateRoutes(currentBlock, line, player);
 				}
 			}
 		}
@@ -77,16 +94,16 @@ public class Autorouter {
 	
 	private boolean isJunction(Block block) {
 		int counter = 0;
-		if(block.getRelative(1, 0, 0).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(1, 0, 0).getType())) {
 			counter++;
 		}
-		if(block.getRelative(-1, 0, 0).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(-1, 0, 0).getType())) {
 			counter++;
 		}
-		if(block.getRelative(0, 0, 1).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(0, 0, 1).getType())) {
 			counter++;
 		}
-		if(block.getRelative(0, 0, -1).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(0, 0, -1).getType())) {
 			counter++;
 		}
 		if(counter >=3)
@@ -97,16 +114,16 @@ public class Autorouter {
 	
 	private boolean isStation(Block block) {
 		int counter = 0;
-		if(block.getRelative(1, 0, 0).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(1, 0, 0).getType())) {
 			counter++;
 		}
-		if(block.getRelative(-1, 0, 0).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(-1, 0, 0).getType())) {
 			counter++;
 		}
-		if(block.getRelative(0, 0, 1).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(0, 0, 1).getType())) {
 			counter++;
 		}
-		if(block.getRelative(0, 0, -1).getType() == Material.RAILS) {
+		if(Trainstore.isRail(block.getRelative(0, 0, -1).getType())) {
 			counter++;
 		}
 		if(counter == 1)
@@ -121,7 +138,7 @@ public class Autorouter {
 			for(int y=-1; y<2; y++) {
 				for(int z=-1; z<2; z++) {
 					Block neighbor = block.getRelative(x, y, z);
-					if(neighbor.getType() == Material.RAILS) {
+					if(Trainstore.isRail(neighbor.getType())) {
 						list.add(neighbor);
 					}
 				}

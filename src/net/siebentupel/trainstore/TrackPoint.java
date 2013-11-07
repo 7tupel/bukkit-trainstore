@@ -18,7 +18,7 @@ public class TrackPoint {
 	
 	public TrackPoint(Block block) throws TrackException {
 		// check if the block is a rail
-		if(!(block.getType() == Material.RAILS)){
+		if(!Trainstore.isRail((block.getType()))){
 			throw new TrackException("block is not a rail");
 		}
 		// set member variables

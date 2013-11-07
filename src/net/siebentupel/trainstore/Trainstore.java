@@ -3,12 +3,14 @@ package net.siebentupel.trainstore;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.Set;
 
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.ChatColor;
+import org.bukkit.Material;
 
 
 
@@ -149,12 +151,36 @@ public final class Trainstore extends JavaPlugin {
     	// get the current destination of the player
     	else if (cmd.getName().equalsIgnoreCase("ts-list-stations")) {
     		if (sender instanceof Player) {
+    			sender.sendMessage("available stations:");
     			for(int i=0; i<this.stations.size(); i++) {
     				sender.sendMessage("station with name " + stations.get(i).getName()+
     						" at (" + stations.get(i).getBlock().getX()+
     						", "+stations.get(i).getBlock().getY()+
     						" ,"+stations.get(i).getBlock().getZ()+")");
     			}
+    		} else {
+    			return false;
+    		}
+    		return true;
+    	}
+    	// get the current destination of the player
+    	else if (cmd.getName().equalsIgnoreCase("ts-list-junctions")) {
+    		if (sender instanceof Player) {
+    			sender.sendMessage("available junctions:");
+    			Set<TrackRouter> junctions = routingTable.keySet();
+    			for(TrackRouter item : junctions) {
+    				sender.sendMessage("junction at "+
+    						"("+item.getBlock().getX()+" ,"+
+    						"("+item.getBlock().getY()+" ,"+
+    						"("+item.getBlock().getZ()+")"+
+    						" with cardinality "+item.getCardinality());
+    			}
+    			/*
+    			for(int i=0; i<this.routingTable.size(); i++) {
+    				sender.sendMessage("junction at (" + routingTable.k.getBlock().getX()+
+    						", "+routingTable.get(i).getBlock().getY()+
+    						" ,"+routingTable.get(i).getBlock().getZ()+")");
+    			}*/
     		} else {
     			return false;
     		}
@@ -185,12 +211,39 @@ public final class Trainstore extends JavaPlugin {
     	return STATION_HEADER.equalsIgnoreCase(ChatColor.stripColor(line));
     }
     
+    public static boolean isRail(Material material) {
+    	if((material == Material.RAILS) || (material == Material.POWERED_RAIL)) {
+    		return true;
+    	}
+    	return false;
+    }
+    
     public void addStation(TrackStation station) {
     	this.stations.add(station);
     }
     
     public LinkedList<TrackStation> getAllStations() {
     	return this.stations;
+    }
+    
+    public HashMap<TrackRouter, HashMap<TrackStation, Direction>> getRoutingTable() {
+    	return this.routingTable;
+    }
+    
+    public Direction getDirection(TrackRouter junction, TrackStation destination) {
+    	return this.routingTable.get(junction).get(destination);
+    }
+    
+    public void addJunction(TrackRouter junction) {
+    	this.routingTable.put(junction, new HashMap<TrackStation, Direction>());
+    }
+    
+    public void clearStations() {
+    	this.stations.clear();
+    }
+    
+    public void clearRoutingTable() {
+    	this.routingTable.clear();
     }
     
 }

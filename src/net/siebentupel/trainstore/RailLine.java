@@ -7,7 +7,7 @@ import org.bukkit.material.Rails;
 
 public class RailLine {
 	/** a list of all blocks of this track */
-	private LinkedList<Block> railBlocks;
+	private LinkedList<Block> railBlocks = new LinkedList<Block>();
 	
 	private TrackPoint start = null;
 	
@@ -44,4 +44,5 @@ public class RailLine {
 	public void addBlock(Block block) {
 		this.railBlocks.add(block);
 	}
+	
 }

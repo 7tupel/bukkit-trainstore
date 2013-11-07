@@ -19,20 +19,22 @@ public final class ClickOnSignListener implements Listener {
 			event.getPlayer().sendMessage("set destination to " + ChatColor.stripColor(event.getSign().getLine(1)));
         } else if(Trainstore.isJunctionSign(event.getSign().getLine(0))) {
         	
-        } else if(Trainstore.isStationSign(event.getSign().getLine(0))) {
+        } else if((Trainstore.isStationSign(event.getSign().getLine(0))) && event.getPlayer().hasPermission("router.update")) {
+        	event.getPlayer().sendMessage("clicked on station sign");
         	// get the next block that is a rail
-        	if(event.getSign().getBlock().getRelative(1, 0, 0).getType() == Material.RAILS) {
+        	if(Trainstore.isRail(event.getSign().getBlock().getRelative(1, 1, 0).getType())) {
+        		event.getPlayer().sendMessage("found rail");
     			Autorouter router = new Autorouter(this.plugin);
-    			router.updateRoutes(event.getSign().getBlock().getRelative(1, 0, 0));
-    		} else if(event.getSign().getBlock().getRelative(-1, 0, 0).getType() == Material.RAILS) {
+    			router.updateRoutes(event.getSign().getBlock().getRelative(1, 1, 0), event.getPlayer());
+    		} else if(Trainstore.isRail(event.getSign().getBlock().getRelative(-1, 1, 0).getType())) {
     			Autorouter router = new Autorouter(this.plugin);
-    			router.updateRoutes(event.getSign().getBlock().getRelative(-1, 0, 0));
-    		} else if(event.getSign().getBlock().getRelative(0, 0, 1).getType() == Material.RAILS) {
+    			router.updateRoutes(event.getSign().getBlock().getRelative(-1, 1, 0), event.getPlayer());
+    		} else if(Trainstore.isRail(event.getSign().getBlock().getRelative(0, 1, 1).getType())) {
     			Autorouter router = new Autorouter(this.plugin);
-    			router.updateRoutes(event.getSign().getBlock().getRelative(0, 0, 1));
-    		} else if(event.getSign().getBlock().getRelative(0, 0, -1).getType() == Material.RAILS) {
+    			router.updateRoutes(event.getSign().getBlock().getRelative(0, 1, 1), event.getPlayer());
+    		} else if(Trainstore.isRail(event.getSign().getBlock().getRelative(0, 1, -1).getType())) {
     			Autorouter router = new Autorouter(this.plugin);
-    			router.updateRoutes(event.getSign().getBlock().getRelative(0, 0, -1));
+    			router.updateRoutes(event.getSign().getBlock().getRelative(0, 1, -1), event.getPlayer());
     		}
         }
     }
