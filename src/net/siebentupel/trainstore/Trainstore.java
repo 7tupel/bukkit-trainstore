@@ -33,8 +33,11 @@ public final class Trainstore extends JavaPlugin {
 	/** a map to store the destination of a player */
 	private Map<Player, String> playerDestination = new HashMap<Player, String>();
 	
-	/***/
+	/** */
 	private LinkedList<TrackStation> stations = new LinkedList<TrackStation>();
+	
+	/** */
+	private LinkedList<RailLine> lines = new LinkedList<RailLine>();
 	
 	/** <TrackRouter(Junctions) <TrackStation(Destination), Direction>> */
 	private HashMap<TrackRouter, HashMap<TrackStation, Direction>> routingTable = new HashMap<TrackRouter, HashMap<TrackStation, Direction>>();
@@ -148,7 +151,7 @@ public final class Trainstore extends JavaPlugin {
     		}
     		return true;
     	}
-    	// get the current destination of the player
+    	// list all stations avaiable
     	else if (cmd.getName().equalsIgnoreCase("ts-list-stations")) {
     		if (sender instanceof Player) {
     			sender.sendMessage("available stations:");
@@ -163,7 +166,7 @@ public final class Trainstore extends JavaPlugin {
     		}
     		return true;
     	}
-    	// get the current destination of the player
+    	// list all junctions available
     	else if (cmd.getName().equalsIgnoreCase("ts-list-junctions")) {
     		if (sender instanceof Player) {
     			sender.sendMessage("available junctions:");
@@ -175,18 +178,48 @@ public final class Trainstore extends JavaPlugin {
     						"("+item.getBlock().getZ()+")"+
     						" with cardinality "+item.getCardinality());
     			}
-    			/*
-    			for(int i=0; i<this.routingTable.size(); i++) {
-    				sender.sendMessage("junction at (" + routingTable.k.getBlock().getX()+
-    						", "+routingTable.get(i).getBlock().getY()+
-    						" ,"+routingTable.get(i).getBlock().getZ()+")");
-    			}*/
+    		} else {
+    			return false;
+    		}
+    		return true;
+    	}
+    	// list all lines available
+    	else if (cmd.getName().equalsIgnoreCase("ts-list-lines")) {
+    		if (sender instanceof Player) {
+    			sender.sendMessage("available lines:");
+    			for(RailLine item : this.lines) {
+    				sender.sendMessage("line starting at ("+item.getStart().getBlock().getX()+ ", "+
+    						item.getStart().getBlock().getY()+ ", "+
+    						item.getStart().getBlock().getZ()+ "); ending at ("+
+    						item.getEnd().getBlock().getX()+ ", "+
+    						item.getEnd().getBlock().getY()+ ", "+
+    						item.getEnd().getBlock().getZ()+ ") with "+ item.getWeight() + " blocks");
+    			}
+    		} else {
+    			return false;
+    		}
+    		return true;
+    	}
+    	// list junction neighbors
+    	else if (cmd.getName().equalsIgnoreCase("ts-list-lines")) {
+    		if (sender instanceof Player) {
+    			sender.sendMessage("available lines:");
+    			Set<TrackRouter> junctions = routingTable.keySet();
+    			for(TrackRouter item : junctions) {
+    				sender.sendMessage("junction at "+
+    						"("+item.getBlock().getX()+" ,"+
+    						"("+item.getBlock().getY()+" ,"+
+    						"("+item.getBlock().getZ()+")"+
+    						" with cardinality "+item.getCardinality() + " and neighbors:");
+    				//for(TrackPoint point : item.getConnectedLines())
+    			}
     		} else {
     			return false;
     		}
     		return true;
     	}
     	return false;
+    	
     }
 
     /**
@@ -236,6 +269,14 @@ public final class Trainstore extends JavaPlugin {
     
     public void addJunction(TrackRouter junction) {
     	this.routingTable.put(junction, new HashMap<TrackStation, Direction>());
+    }
+    
+    public void addRailLine(RailLine line) {
+    	this.lines.add(line);
+    }
+    
+    public LinkedList<RailLine> getLines() {
+    	return this.lines;
     }
     
     public void clearStations() {

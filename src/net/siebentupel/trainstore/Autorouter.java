@@ -36,6 +36,8 @@ public class Autorouter {
 		player.sendMessage("found first station");
 		// make a new line with this station as start
 		RailLine line = new RailLine();
+		// add line to the global line list
+		this.plugin.addRailLine(line);
 		// set station as one end of the trackline
 		line.setStart(station);
 		// add the line as connected to the station
@@ -49,11 +51,11 @@ public class Autorouter {
 	}
 	
 	public void updateRoutes(Block block, RailLine line, Player player) {
-		player.sendMessage("recursive call");
+		//player.sendMessage("recursive call");
 		LinkedList<Block> next = getNextTracks(block);
 		// go through all rails next to the current
 		for(int i=0;i<next.size();i++) {
-			player.sendMessage("looping through neighbors");
+			//player.sendMessage("looping through neighbors");
 			Block currentBlock = next.get(i);
 			// first check if the rail was not yet visited
 			if(!(visited.contains(currentBlock))) {
@@ -74,8 +76,38 @@ public class Autorouter {
 				// it is a junction/router
 				else if(isJunction(currentBlock)) {
 					player.sendMessage("found new junction");
+					// create a new junction
 					TrackRouter junction = new TrackRouter(currentBlock);
+					// add the junction to the global junction map
 					this.plugin.addJunction(junction);
+					// add the block to the current line
+					line.addBlock(currentBlock);
+					// add the junction block as end of the line
+					line.setEnd(junction);
+					// add the line to the junction
+					junction.addLine(line);
+					// mark the current block as visited
+					visited.add(currentBlock);
+					// now check neighbor blocks for rails. there should be at least 3 and max 4
+					LinkedList<Block> junctionNeighbors = getNextTracks(block);
+					// go trough all neighbors
+					for(Block item : junctionNeighbors) {
+						// if the neighbor was not yet visited
+						if(!(visited.contains(item))) {
+							// start a new line
+							RailLine newLine = new RailLine();
+							// add line to the global line list
+							this.plugin.addRailLine(newLine);
+							// add the block to the line
+							newLine.addBlock(item);
+							// set the junction as start for the new line
+							newLine.setStart(junction);
+							// add the line to the junction
+							junction.addLine(newLine);
+							// recursive call
+							updateRoutes(item, newLine, player);
+						}
+					}
 				} 
 				// just a simple rail
 				else {

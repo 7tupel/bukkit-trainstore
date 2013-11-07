@@ -27,6 +27,11 @@ commands:
     usage: /<command>
     permission: <plugin name>.junction.list
     permission-message: You don't have <permission>
+  ts-list-lines:
+    description: list all lines.
+    usage: /<command>
+    permission: <plugin name>.line.list
+    permission-message: You don't have <permission>
 permissions:
   destination.set:
     description: set a destination for oneself
@@ -42,6 +47,9 @@ permissions:
     default: true
   junction.list:
     description: list all junctions
+    default: op
+  line.list:
+    description: list all lines
     default: op
   router.update:
     description: update all routes
