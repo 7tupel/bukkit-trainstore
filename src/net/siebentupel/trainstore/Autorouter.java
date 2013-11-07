@@ -1,0 +1,132 @@
+package net.siebentupel.trainstore;
+
+import java.util.LinkedList;
+
+import net.siebentupel.trainstore.exceptions.TrackException;
+
+import org.bukkit.Material;
+import org.bukkit.block.Block;
+
+public class Autorouter {
+	
+	private LinkedList<Block> visited = new LinkedList<Block>();
+	
+	private LinkedList<TrackPoint> trackPoints = new LinkedList<TrackPoint>();
+
+	private Trainstore plugin;
+	
+	public Autorouter(Trainstore plugin) {
+		this.plugin = plugin;
+	}
+	
+	public void updateRoutes(Block root) throws TrackException {
+		// first check if the block is a station block (=end of track)
+		if(!isStation(root)) {
+			throw new TrackException("routing update must start at a station!");
+		}
+		// make a new station
+		TrackStation station = new TrackStation(root);
+		// add the station to the global station list
+		this.plugin.addStation(station);
+		// make a new line with this station as start
+		RailLine line = new RailLine();
+		// set station as one end of the trackline
+		line.setStart(station);
+		// add the line as connected to the station
+		station.addLine(line);
+		// add the current block as a block of the trackline
+		line.addBlock(root);
+		// set the block as visited
+		visited.add(root);
+		// call update for recursive route search
+		updateRoutes(root, line);
+	}
+	
+	public void updateRoutes(Block block, RailLine line) {
+		LinkedList<Block> next = getNextTracks(block);
+		// go through all rails next to the current
+		for(int i=0;i<next.size();i++) {
+			Block currentBlock = next.get(i);
+			// first check if the rail was not yet visited
+			if(!(visited.contains(currentBlock))) {
+				// distinguish between the three types of TrackPoints: simple Rail, Station and Router/Junction
+				// it is a station
+				if(isStation(currentBlock)) {
+					// add the block to the line
+					line.addBlock(currentBlock);
+					// make a new station and add it to the track
+					TrackStation end = new TrackStation(currentBlock);
+					line.setEnd(end);
+					// add the station to the global station list
+					this.plugin.addStation(end);
+					// add the current line to the station
+					end.addLine(line);
+				}
+				// it is a junction/router
+				else if(isJunction(currentBlock)) {
+					
+				} 
+				// just a simple rail
+				else {
+					
+				}
+			}
+		}
+	}
+	
+	
+	private boolean isJunction(Block block) {
+		int counter = 0;
+		if(block.getRelative(1, 0, 0).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(block.getRelative(-1, 0, 0).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(block.getRelative(0, 0, 1).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(block.getRelative(0, 0, -1).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(counter >=3)
+			return true;
+		else
+			return false;
+	}
+	
+	private boolean isStation(Block block) {
+		int counter = 0;
+		if(block.getRelative(1, 0, 0).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(block.getRelative(-1, 0, 0).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(block.getRelative(0, 0, 1).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(block.getRelative(0, 0, -1).getType() == Material.RAILS) {
+			counter++;
+		}
+		if(counter == 1)
+			return true;
+		else
+			return false;
+	}
+	
+	private LinkedList<Block> getNextTracks(Block block) {
+		LinkedList<Block> list = new LinkedList<Block>();
+		for(int x=-1; x<2; x++) {
+			for(int y=-1; y<2; y++) {
+				for(int z=-1; z<2; z++) {
+					Block neighbor = block.getRelative(x, y, z);
+					if(neighbor.getType() == Material.RAILS) {
+						list.add(neighbor);
+					}
+				}
+			}
+		}
+		return list;
+	}
+}

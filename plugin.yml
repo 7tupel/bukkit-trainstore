@@ -17,6 +17,11 @@ commands:
     usage: /<command>
     permission: <plugin name>.destination.get
     permission-message: You don't have <permission>
+  ts-list-stations:
+    description: list all stations.
+    usage: /<command>
+    permission: <plugin name>.station.list
+    permission-message: You don't have <permission>
 permissions:
   destination.set:
     description: set a destination for oneself
@@ -26,4 +31,7 @@ permissions:
     default: true
   destination.get:
     description: get current destination for oneself
+    default: true
+  station.list:
+    description: list all stations
     default: true

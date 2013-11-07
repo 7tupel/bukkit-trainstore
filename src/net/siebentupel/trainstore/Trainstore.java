@@ -1,6 +1,7 @@
 package net.siebentupel.trainstore;
 
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.Map;
 
 import org.bukkit.command.Command;
@@ -25,8 +26,16 @@ public final class Trainstore extends JavaPlugin {
 	/** the header of junction signs */
 	private static final String JUNCTION_HEADER = "[tsjunction]";
 	
+	private static final String STATION_HEADER = "[tsstation]";
+	
 	/** a map to store the destination of a player */
 	private Map<Player, String> playerDestination = new HashMap<Player, String>();
+	
+	/***/
+	private LinkedList<TrackStation> stations = new LinkedList<TrackStation>();
+	
+	/** <TrackRouter(Junctions) <TrackStation(Destination), Direction>> */
+	private HashMap<TrackRouter, HashMap<TrackStation, Direction>> routingTable = new HashMap<TrackRouter, HashMap<TrackStation, Direction>>();
 	
 	/**
 	 * create all necessary data structures for the plugin and register eventhandlers
@@ -137,6 +146,20 @@ public final class Trainstore extends JavaPlugin {
     		}
     		return true;
     	}
+    	// get the current destination of the player
+    	else if (cmd.getName().equalsIgnoreCase("ts-list-stations")) {
+    		if (sender instanceof Player) {
+    			for(int i=0; i<this.stations.size(); i++) {
+    				sender.sendMessage("station with name " + stations.get(i).getName()+
+    						" at (" + stations.get(i).getBlock().getX()+
+    						", "+stations.get(i).getBlock().getY()+
+    						" ,"+stations.get(i).getBlock().getZ()+")");
+    			}
+    		} else {
+    			return false;
+    		}
+    		return true;
+    	}
     	return false;
     }
 
@@ -156,6 +179,18 @@ public final class Trainstore extends JavaPlugin {
      */
     public static boolean isJunctionSign(String line) {
     	return JUNCTION_HEADER.equalsIgnoreCase(ChatColor.stripColor(line));
+    }
+    
+    public static boolean isStationSign(String line) {
+    	return STATION_HEADER.equalsIgnoreCase(ChatColor.stripColor(line));
+    }
+    
+    public void addStation(TrackStation station) {
+    	this.stations.add(station);
+    }
+    
+    public LinkedList<TrackStation> getAllStations() {
+    	return this.stations;
     }
     
 }
