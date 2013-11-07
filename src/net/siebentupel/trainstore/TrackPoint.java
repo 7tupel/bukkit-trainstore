@@ -38,4 +38,35 @@ public class TrackPoint {
 	public Block getBlock() {
 		return this.block;
 	}
+	
+	public LinkedList<TrackStation> getAttachedStations() {
+		LinkedList<TrackStation> stations = new LinkedList<TrackStation>();
+		// go tzhrough all connected lines
+		for(RailLine line : connectedLines) {
+			// check if this is a trackStation or a TrackRouter
+			if(this instanceof TrackJunction) {
+				// check if the start or the end of the line is a station
+				if(line.getStart() instanceof TrackStation) {
+					stations.add((TrackStation)line.getStart());
+				}
+				if(line.getEnd() instanceof TrackStation) {
+					stations.add((TrackStation)line.getEnd());
+				}
+			}
+			// this is a TrackStation
+			else if(this instanceof TrackStation) {
+				// make sure the line start/end is a TrackStation as well and not equal to this
+				if((line.getStart() instanceof TrackStation) && !(((TrackStation)this).equals((TrackStation)line.getStart()))){
+					stations.add((TrackStation)line.getStart());
+				}
+				if((line.getEnd() instanceof TrackStation) && !(((TrackStation)this).equals((TrackStation)line.getEnd()))){
+					stations.add((TrackStation)line.getEnd());
+				}
+			}
+		}
+		return stations;
+	}
+	
+	
+	
 }

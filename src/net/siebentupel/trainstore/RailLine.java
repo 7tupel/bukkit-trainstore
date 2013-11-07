@@ -11,6 +11,9 @@ public class RailLine {
 	
 	private TrackPoint start = null;
 	
+	private TrackPoint end = null;
+	
+	
 	public TrackPoint getStart() {
 		return start;
 	}
@@ -26,8 +29,6 @@ public class RailLine {
 	public void setEnd(TrackPoint end) {
 		this.end = end;
 	}
-
-	private TrackPoint end = null;
 	
 	public int getWeight() {
 		return railBlocks.size();

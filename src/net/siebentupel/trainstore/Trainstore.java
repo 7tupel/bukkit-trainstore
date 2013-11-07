@@ -40,7 +40,7 @@ public final class Trainstore extends JavaPlugin {
 	private LinkedList<RailLine> lines = new LinkedList<RailLine>();
 	
 	/** <TrackRouter(Junctions) <TrackStation(Destination), Direction>> */
-	private HashMap<TrackRouter, HashMap<TrackStation, Direction>> routingTable = new HashMap<TrackRouter, HashMap<TrackStation, Direction>>();
+	private HashMap<TrackJunction, HashMap<TrackStation, Direction>> routingTable = new HashMap<TrackJunction, HashMap<TrackStation, Direction>>();
 	
 	/**
 	 * create all necessary data structures for the plugin and register eventhandlers
@@ -170,8 +170,8 @@ public final class Trainstore extends JavaPlugin {
     	else if (cmd.getName().equalsIgnoreCase("ts-list-junctions")) {
     		if (sender instanceof Player) {
     			sender.sendMessage("available junctions:");
-    			Set<TrackRouter> junctions = routingTable.keySet();
-    			for(TrackRouter item : junctions) {
+    			Set<TrackJunction> junctions = routingTable.keySet();
+    			for(TrackJunction item : junctions) {
     				sender.sendMessage("junction at "+
     						"("+item.getBlock().getX()+" ,"+
     						"("+item.getBlock().getY()+" ,"+
@@ -204,12 +204,12 @@ public final class Trainstore extends JavaPlugin {
     	else if (cmd.getName().equalsIgnoreCase("ts-list-lines")) {
     		if (sender instanceof Player) {
     			sender.sendMessage("available lines:");
-    			Set<TrackRouter> junctions = routingTable.keySet();
-    			for(TrackRouter item : junctions) {
+    			Set<TrackJunction> junctions = routingTable.keySet();
+    			for(TrackJunction item : junctions) {
     				sender.sendMessage("junction at "+
     						"("+item.getBlock().getX()+" ,"+
-    						"("+item.getBlock().getY()+" ,"+
-    						"("+item.getBlock().getZ()+")"+
+    						""+item.getBlock().getY()+" ,"+
+    						""+item.getBlock().getZ()+")"+
     						" with cardinality "+item.getCardinality() + " and neighbors:");
     				//for(TrackPoint point : item.getConnectedLines())
     			}
@@ -245,7 +245,8 @@ public final class Trainstore extends JavaPlugin {
     }
     
     public static boolean isRail(Material material) {
-    	if((material == Material.RAILS) || (material == Material.POWERED_RAIL)) {
+    	if((material == Material.RAILS) || (material == Material.POWERED_RAIL)
+    			|| (material == Material.ACTIVATOR_RAIL) || (material == Material.DETECTOR_RAIL)) {
     		return true;
     	}
     	return false;
@@ -259,15 +260,15 @@ public final class Trainstore extends JavaPlugin {
     	return this.stations;
     }
     
-    public HashMap<TrackRouter, HashMap<TrackStation, Direction>> getRoutingTable() {
+    public HashMap<TrackJunction, HashMap<TrackStation, Direction>> getRoutingTable() {
     	return this.routingTable;
     }
     
-    public Direction getDirection(TrackRouter junction, TrackStation destination) {
+    public Direction getDirection(TrackJunction junction, TrackStation destination) {
     	return this.routingTable.get(junction).get(destination);
     }
     
-    public void addJunction(TrackRouter junction) {
+    public void addJunction(TrackJunction junction) {
     	this.routingTable.put(junction, new HashMap<TrackStation, Direction>());
     }
     
@@ -285,6 +286,10 @@ public final class Trainstore extends JavaPlugin {
     
     public void clearRoutingTable() {
     	this.routingTable.clear();
+    }
+    
+    public void clearLines() {
+    	this.lines.clear();
     }
     
 }
