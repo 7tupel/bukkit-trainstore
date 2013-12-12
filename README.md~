@@ -21,6 +21,7 @@ To route a Minecart just create a 3 or 4 way junction as usual. Then place a jun
 2. DESTINATION:DIRECTION
 3. DESTINATION:DIRECTION
 4. ...
+
 where a destination is a string with the name of the destination an direction is one of characters **n**, **s**, **e** and **w** each for the directions north, south, east and west.
 
 If a player does not set a destination *default* is used.

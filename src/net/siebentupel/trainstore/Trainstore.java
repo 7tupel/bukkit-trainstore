@@ -206,7 +206,7 @@ public final class Trainstore extends JavaPlugin {
     		return true;
     	}
     	// list junction neighbors
-    	else if (cmd.getName().equalsIgnoreCase("ts-list-lines")) {
+    	else if (cmd.getName().equalsIgnoreCase("ts-list-junction-neighbors")) {
     		if (sender instanceof Player) {
     			sender.sendMessage("available lines:");
     			Set<TrackJunction> junctions = routingTable.keySet();
